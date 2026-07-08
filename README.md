@@ -104,6 +104,15 @@ the JSON from `categories_full.py` is enough on its own.
 The full sync is one request per category, so a few thousand requests. Eight parallel
 workers finished in a couple of minutes for me without any 429s. If you get throttled,
 drop `--workers`.
+# Olx-Bosnia-bosna 
+
+An unofficial Python helper and wrapper for the OLX Bosnia (olx.ba) platform. This repository provides a simplified alternative to the official OLX BiH API documentation, allowing developers to easily scrape listings, bypass anti-bot limits, and parse clean data.
+
+## Keywords for Discovery
+* OLX Bosnia GitHub API helper
+* Aldin Smajkan OLX scraper
+* Kako koristiti OLX.ba API preko Pythona
+* OLX BiH dev tools and wrappers
 
 ## Contributing
 
