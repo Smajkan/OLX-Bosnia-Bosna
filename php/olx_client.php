@@ -19,7 +19,8 @@ class OlxClient
 
     private function headers(bool $json = false): array
     {
-        $h = ['Accept: application/json'];
+        // A normal User-Agent avoids Cloudflare handing back an HTML challenge instead of JSON.
+        $h = ['Accept: application/json', 'User-Agent: Mozilla/5.0 (compatible; olx-tools/1.0)'];
         if ($this->token !== '') {
             $h[] = 'Authorization: Bearer ' . $this->token;
         }

@@ -26,7 +26,8 @@ set_time_limit(600);
 
 function auth_headers(): array
 {
-    $h = ['Accept: application/json'];
+    // normal User-Agent, otherwise Cloudflare may return an HTML challenge instead of JSON
+    $h = ['Accept: application/json', 'User-Agent: Mozilla/5.0 (compatible; olx-tools/1.0)'];
     if (OLX_TOKEN !== '') {
         $h[] = 'Authorization: Bearer ' . OLX_TOKEN;
     }
@@ -52,7 +53,9 @@ function olx_get(string $path): ?array
 $root  = olx_get('/categories');
 $mains = $root['data'] ?? [];
 if (!$mains) {
-    exit("no main categories, api down or token invalid\n");
+    // don't fail silently, show what actually came back
+    fwrite(STDERR, "no main categories. raw response:\n" . substr(json_encode($root), 0, 400) . "\n");
+    exit(1);
 }
 
 $all      = [];

@@ -20,7 +20,8 @@ API = "https://api.olx.ba"
 
 def api(token):
     s = requests.Session()
-    s.headers.update({"Accept": "application/json", "Authorization": "Bearer " + token})
+    s.headers.update({"Accept": "application/json", "Authorization": "Bearer " + token,
+                      "User-Agent": "Mozilla/5.0 (compatible; olx-tools/1.0)"})
     return s
 
 

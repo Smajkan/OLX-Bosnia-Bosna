@@ -23,9 +23,11 @@ API = "https://api.olx.ba"
 
 def get(token, path):
     r = requests.get(API + path,
-                     headers={"Accept": "application/json", "Authorization": "Bearer " + token},
+                     headers={"Accept": "application/json", "Authorization": "Bearer " + token,
+                              "User-Agent": "Mozilla/5.0 (compatible; olx-tools/1.0)"},
                      timeout=20)
-    return r.json().get("data")
+    body = r.json()
+    return body.get("data") if isinstance(body, dict) else None
 
 
 def main():

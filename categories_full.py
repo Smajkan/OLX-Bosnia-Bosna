@@ -23,9 +23,14 @@ import requests
 
 API = "https://api.olx.ba"
 
+# Some setups (Cloudflare in front of the API) reject the default python-requests
+# User-Agent and hand back an HTML challenge instead of JSON. Sending a normal UA
+# avoids the "works in the browser, empty from the script" trap.
+UA = "Mozilla/5.0 (compatible; olx-tools/1.0)"
+
 
 def headers(token):
-    h = {"Accept": "application/json"}
+    h = {"Accept": "application/json", "User-Agent": UA}
     if token:
         h["Authorization"] = "Bearer " + token
     return h
@@ -68,7 +73,19 @@ def get_children(session, token, node):
 def fetch_tree(token, workers=8, max_depth=8):
     session = requests.Session()
     r = session.get(API + "/categories", headers=headers(token), timeout=20)
-    mains = r.json().get("data") or []
+
+    # Fail loudly instead of writing an empty file. If /categories doesn't return a
+    # list under "data", something is wrong (token, rate limit, blocked UA...) and we
+    # want to see the real response rather than silently produce empty JSON.
+    try:
+        body = r.json()
+    except ValueError:
+        sys.exit("GET /categories did not return JSON (HTTP %d). First bytes:\n%s"
+                 % (r.status_code, r.text[:300]))
+    mains = body.get("data") if isinstance(body, dict) else None
+    if not isinstance(mains, list) or not mains:
+        sys.exit("GET /categories returned no category list (HTTP %d). Response:\n%s"
+                 % (r.status_code, str(body)[:400]))
 
     seen = {}
     frontier = []
@@ -138,6 +155,8 @@ def main():
 
     flat = fetch_tree(args.token, workers=args.workers)
     print("\ntotal categories: %d" % len(flat))
+    if not flat:
+        sys.exit("nothing fetched, not writing empty files")
 
     with open("olx_categories_full.json", "w", encoding="utf-8") as f:
         json.dump(flat, f, ensure_ascii=False, indent=2)

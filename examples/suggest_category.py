@@ -20,7 +20,8 @@ def suggest(token, title, limit=5):
     r = requests.get(
         API + "/categories/suggest",
         params={"keyword": title},
-        headers={"Accept": "application/json", "Authorization": "Bearer " + token},
+        headers={"Accept": "application/json", "Authorization": "Bearer " + token,
+                 "User-Agent": "Mozilla/5.0 (compatible; olx-tools/1.0)"},
         timeout=20,
     )
     data = r.json().get("data") or []
