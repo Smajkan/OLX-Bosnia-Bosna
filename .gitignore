@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+olx_categories_full.json
+olx_categories_tree.json
+main_cats.json
+children_cats.json
+grandchildren_cats.json
+*.sql.gz
